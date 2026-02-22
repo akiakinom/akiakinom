@@ -5,6 +5,7 @@ const Isod = {
             console.error("Required DOM elements not found for isod.js.");
             return;
         }
+        this.isHovered = false;
         this.setupSkewEffect();
         this.setupShadowEffect();
         this.setupCanvasAnimation();
@@ -34,9 +35,8 @@ const Isod = {
     },
 
     setupShadowEffect() {
-        let isHovered = false;
-        this.isod.addEventListener('mouseenter', () => isHovered = true);
-        this.isod.addEventListener('mouseleave', () => isHovered = false);
+        this.isod.addEventListener('mouseenter', () => this.isHovered = true);
+        this.isod.addEventListener('mouseleave', () => this.isHovered = false);
 
         setInterval(() => {
             if (!this.label) return;
@@ -44,7 +44,11 @@ const Isod = {
             shadow.innerText = this.label.innerText;
             shadow.className = 'isod-shadow';
 
-            const radius = isHovered ? 100 : 60;
+            if (this.isHovered) {
+                shadow.style.color = 'hsla(0, 0%, 100%, 0.5)';
+            }
+
+            const radius = this.isHovered ? 100 : 60;
             const angle = Math.random() * Math.PI * 2;
             const tx = Math.cos(angle) * radius;
             const ty = Math.sin(angle) * radius;
@@ -84,14 +88,15 @@ const Isod = {
         resizeCanvas();
 
         const barHeight = 2;
-        const barColor = "rgba(255, 255, 0, 0.1)";
+        const barColorYellow = "rgba(255, 255, 0, 0.1)";
+        const barColorWhite = "rgba(255, 255, 255, 0.1)";
         const backgroundColor = "black";
 
         const draw = () => {
             ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = barColor;
+            ctx.fillStyle = this.isHovered ? barColorWhite : barColorYellow;
             for (let y = 0; y < canvas.height; y += barHeight * 2) {
                 ctx.fillRect(0, y, canvas.width, barHeight);
             }
