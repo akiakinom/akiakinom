@@ -1,4 +1,4 @@
-const spiralContainer = document.getElementById("spiral");
+const spiralContainer = document.getElementById("limbo");
 
 // Create canvas
 const spiralCanvas = document.createElement("canvas");

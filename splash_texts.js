@@ -9,7 +9,10 @@ const subtitles = [
     "mizuena my beloved :3", "random cs student", "i am so dead inside", "domainn update!!!!", "updated this website",
     "just monika.", "arf", "hello random person visiting this website for uni purposes",
     "i love my beautiful fox wife", "i habe a  lovely wife :3c", "those meds rellly kicked in",
-    "I GOT FUCKN DIAGNOSED!!!", "certified adhd & autism"
+    "I GOT FUCKN DIAGNOSED!!!", "certified adhd & autism", "when will cities skylines 2 finally work",
+    "i hate this fucking university", "isn't it funny how i-", "trans rights!!!", "that's a nice argument but idc",
+    "i'm proud of this website :3c", "i rember", "jebać amplitron", "dawajcie mi kurwa medikinet",
+    "PW? more like paws at u OwO"
 ]
 
 function isBirthday() {

@@ -8,10 +8,113 @@ body {
 
 }
 
-#spiral {
-    max-width: 512px;
-    padding: 3em 16px;
+.link {
+  display: inline-flex;
+  align-items: center;
+  color: hsl(261, 100%, 70%);
+  border-bottom: 1.5px transparent solid;
+  transition: border-color 50ms ease-out, filter 50ms ease-out, color 50ms ease-out;
+  font-weight: 400;
+  line-height: 0.95;
+}
+
+.link:hover {
+    border-bottom-color: hsl(261, 100%, 70%);
+    text-decoration: none;
+    filter: brightness(1.1);
+}
+
+.link::after {
+  content: "";
+  display: inline-block;
+  translate: 0 1px;
+  width: 14px;
+  height: 14px;
+  background-image: url('icons/arrow.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#app_container {
     margin: 1em auto;
+    max-width: 512px;
+    display: flex;
+    gap: 1em;
+}
+
+#app_container > * {
+    flex: 1;
+}
+
+#isod-container {
+    position: relative;
+    margin-bottom: 1em;
+    overflow: hidden;
+    z-index: 0;
+}
+
+#isod {
+    padding: 3em 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: hsl(48, 100%, 90%);
+    border: 2px solid #FFD630;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s, transform 0.3s;
+    box-sizing: border-box;
+}
+
+#isod:hover {
+    /* background-color: white; */
+    border-color: white;
+    color: white;
+    text-decoration: none;
+}
+
+#isod > span {
+    position: relative;
+    z-index: 10;
+    background-color: #231F20;
+    padding: 1em 1.6em;
+    border-radius: 4px;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+    pointer-events: none;
+}
+
+.isod-shadow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    white-space: nowrap;
+    font-weight: 600;
+    z-index: 5;
+    pointer-events: none;
+    padding: 1em 1.6em;
+    background-color: hsla(345, 6%, 13%, 0.500);
+    color: hsla(48, 100%, 90%, 0.5);
+    border-radius: 4px;
+    animation: fadeOut 1s forwards linear;
+}
+
+@keyframes fadeOut {
+    from { 
+        opacity: 0.6;
+    }
+    to { 
+        opacity: 0; 
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.4); 
+    }
+}
+
+#limbo {
+    padding: 3em 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,7 +129,7 @@ body {
     box-sizing: border-box;
 }
 
-#spiral:hover {
+#limbo:hover {
     background-color: white;
     border-color: white;
     color: white;
@@ -176,7 +279,7 @@ a[href*="."]:hover {
     #mizu {
         display: none !important;
     }
-    #main, #spiral {
+    #main, #app_container {
         width: 90%;
     }
 
@@ -341,6 +444,8 @@ h3 {
     grid-template-columns: repeat(6, 1fr);
     gap: .4em;
     justify-items: center;
+    align-items: center;
+    text-align: center;
 }
 
 #socials > a > img {
@@ -441,7 +546,7 @@ h3 {
     height: 12px;
 }
 
-#spiral:hover {
+#limbo:hover {
     text-decoration: none;
 }
 
@@ -453,7 +558,7 @@ h3 {
     text-align: center;
 }
 
-#spiral > span {
+#limbo > span {
     position: relative;
     z-index: 10;
     background-color: black;
