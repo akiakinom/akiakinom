@@ -68,6 +68,7 @@ const Isod = {
         canvas.style.left = "0";
         canvas.style.width = "100%";
         canvas.style.height = "100%";
+        canvas.style.opacity = "0.3";
         canvas.style.zIndex = "0";
         this.isod.prepend(canvas);
 
@@ -82,32 +83,41 @@ const Isod = {
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
-        let barY = 0;
-        let barHeight = 4;
-        let speed = 2;
-        let direction = 1;
+        const barHeight = 2;
+        const barColor = "rgba(255, 255, 0, 0.1)";
         const backgroundColor = "black";
 
         const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
-
-            ctx.fillRect(0, barY, canvas.width, barHeight);
-
-            barY += speed * direction;
-
-            if (barY + barHeight > canvas.height) {
-                barY = 0;
-                direction = -1;
-            } else if (barY < 0) {
-                direction = 1;
-                barY = 0;
+            ctx.fillStyle = barColor;
+            for (let y = 0; y < canvas.height; y += barHeight * 2) {
+                ctx.fillRect(0, y, canvas.width, barHeight);
             }
-            
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const noiseIntensity = 0.2;
+
+            for (let y = 0; y < canvas.height; y += 2) {
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const noise = Math.random() * noiseIntensity;
+                    const color = 255 * noise;
+
+                    for (let j = 0; j < 2; j++) {
+                        for (let i = 0; i < 2; i++) {
+                            if (x + i < canvas.width && y + j < canvas.height) {
+                                const index = ((y + j) * canvas.width + (x + i)) * 4;
+                                data[index] += color;
+                                data[index + 1] += color;
+                            }
+                        }
+                    }
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+
             requestAnimationFrame(draw);
         };
 
