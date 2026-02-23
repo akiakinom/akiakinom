@@ -72,7 +72,7 @@ const Isod = {
         canvas.style.left = "0";
         canvas.style.width = "100%";
         canvas.style.height = "100%";
-        canvas.style.opacity = "0.3";
+        canvas.style.opacity = "0.5";
         canvas.style.zIndex = "0";
         this.isod.prepend(canvas);
 

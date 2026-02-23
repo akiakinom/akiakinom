@@ -1,81 +1,108 @@
-const spiralContainer = document.getElementById("limbo");
-
-// Create canvas
-const spiralCanvas = document.createElement("canvas");
-spiralCanvas.style.position = "absolute";
-spiralCanvas.style.top = "0";
-spiralCanvas.style.left = "0";
-spiralCanvas.style.width = "100%";
-spiralCanvas.style.height = "100%";
-spiralCanvas.style.zIndex = "0";
-spiralCanvas.style.imageRendering = "pixelated"; 
-spiralContainer.prepend(spiralCanvas);
-
-const spiralCtx = spiralCanvas.getContext("2d");
-
-const PIXEL_SIZE = 8;
-const FREQUENCY = 0.9;
-const BASE_SPEED = 0.05;
-let width, height;
-
-function resize() {
-    const rect = spiralContainer.getBoundingClientRect();
-    width = Math.ceil(rect.width / PIXEL_SIZE);
-    height = Math.ceil(rect.height / PIXEL_SIZE);
-    spiralCanvas.width = width;
-    spiralCanvas.height = height;
-}
-
-window.addEventListener("resize", resize);
-window.addEventListener("load", resize);
-resize();
-
-let isHovered = false;
-spiralContainer.addEventListener("mouseenter", () => isHovered = true);
-spiralContainer.addEventListener("mouseleave", () => isHovered = false);
-
-let time = 0;
-let hoverSpeed = 0;
-
-function draw() {
-    const imgData = spiralCtx.createImageData(width, height);
-    const data = imgData.data;
-
-    const cx = width / 2;
-    const cy = height / 2;
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            const index = (y * width + x) * 4;
-
-            const dx = (x - cx) * (height / width * 0.5);
-            const dy = y - cy;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const angle = Math.atan2(dy, dx);
-
-            const value = Math.sin(dist * FREQUENCY - angle * 2 + time);
-            
-            const intensity = Math.floor((value * 0.5 + 0.5) * 200); 
-            
-            // rgb(142, 81, 255)
-            data[index] = 0;
-            data[index + 1] = 0;
-            data[index + 2] = 0;
-            data[index + 3] = intensity;
+const Spiral = {
+    init() {
+        this.cacheDOMElements();
+        if (!this.spiralContainer) {
+            console.error("Required DOM element #limbo not found for spiral.js.");
+            return;
         }
+
+        this.PIXEL_SIZE = 8;
+        this.FREQUENCY = 0.9;
+        this.BASE_SPEED = 0.05;
+        this.width = 0;
+        this.height = 0;
+        this.time = 0;
+        this.hoverSpeed = 0;
+        this.isHovered = false;
+
+        this.setupCanvas();
+        this.setupHoverEffect();
+        
+        this.draw = this.draw.bind(this);
+        this.draw();
+    },
+
+    cacheDOMElements() {
+        this.spiralContainer = document.getElementById("limbo");
+    },
+
+    setupCanvas() {
+        this.spiralCanvas = document.createElement("canvas");
+        this.spiralCanvas.style.position = "absolute";
+        this.spiralCanvas.style.top = "0";
+        this.spiralCanvas.style.left = "0";
+        this.spiralCanvas.style.width = "100%";
+        this.spiralCanvas.style.height = "100%";
+        this.spiralCanvas.style.zIndex = "0";
+        this.spiralCanvas.style.imageRendering = "pixelated";
+        this.spiralContainer.prepend(this.spiralCanvas);
+
+        this.spiralCtx = this.spiralCanvas.getContext("2d");
+
+        const boundResize = this.resize.bind(this);
+        window.addEventListener("resize", boundResize);
+        window.addEventListener("load", boundResize);
+        boundResize();
+    },
+
+    resize() {
+        const rect = this.spiralContainer.getBoundingClientRect();
+        this.width = Math.ceil(rect.width / this.PIXEL_SIZE);
+        this.height = Math.ceil(rect.height / this.PIXEL_SIZE);
+        this.spiralCanvas.width = this.width;
+        this.spiralCanvas.height = this.height;
+    },
+
+    setupHoverEffect() {
+        this.spiralContainer.addEventListener("mouseenter", () => this.isHovered = true);
+        this.spiralContainer.addEventListener("mouseleave", () => this.isHovered = false);
+    },
+
+    draw() {
+        const imgData = this.spiralCtx.createImageData(this.width, this.height);
+        const data = imgData.data;
+
+        const cx = this.width / 2;
+        const cy = this.height / 2;
+
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                const index = (y * this.width + x) * 4;
+
+                const dx = (x - cx) * (this.height / this.width * 0.5);
+                const dy = y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx);
+
+                const value = Math.sin(dist * this.FREQUENCY - angle * 2 + this.time);
+                
+                const intensity = Math.floor((value * 0.5 + 0.5) * 200);
+                
+                data[index] = 0;
+                data[index + 1] = 0;
+                data[index + 2] = 0;
+                data[index + 3] = intensity;
+            }
+        }
+
+        this.spiralCtx.putImageData(imgData, 0, 0);
+
+        if (this.isHovered) {
+            this.hoverSpeed = Math.min(this.hoverSpeed + 0.01, 0.4);
+        } else {
+            this.hoverSpeed = Math.max(this.hoverSpeed - 0.01, 0);
+        }
+
+        const currentSpeed = this.BASE_SPEED + this.hoverSpeed;
+        this.time -= currentSpeed;
+        requestAnimationFrame(this.draw);
     }
+};
 
-    spiralCtx.putImageData(imgData, 0, 0);
-
-    if (isHovered) {
-        hoverSpeed = Math.min(hoverSpeed + 0.01, 0.4);
+(() => {
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", Spiral.init.bind(Spiral));
     } else {
-        hoverSpeed = Math.max(hoverSpeed - 0.01, 0);
+        Spiral.init();
     }
-
-    const currentSpeed = BASE_SPEED + hoverSpeed;
-    time -= currentSpeed;
-    requestAnimationFrame(draw);
-}
-
-draw();
+})();
